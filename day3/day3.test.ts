@@ -19,21 +19,34 @@ function move(position: Coord, direction: string): Coord {
     return { x, y };
 }
 
-function walk(path: string, start: Coord, steps: Set<string>): Set<string> {
+function walk(path: string, start: Coord, steps: Set<string>): [ Coord, Set<string> ] {
     let walked: Set<string> = new Set(steps);
     let position: Coord = start;
-    walked.add("0,0");
+    walked.add(`${start.x},${start.y}`);
     path.split('').forEach(step => {
         position = move(position, step);
         walked.add(`${position.x},${position.y}`);
     });
-    return walked;
+    return [ position, walked ];
 }
 
 function partOne(input: string[]): number {
-    let position: Coord = { x: 0, y: 0 };
+    let start: Coord = { x: 0, y: 0 };
     return input.reduce((acc, line) => {
-        return walk(line, position, acc);
+        [start, acc] = walk(line, start, acc);
+        return acc;
+    }, new Set<string>()).size;
+}
+
+function partTwo(input: string[]): number {
+    let santa: Coord = { x: 0, y: 0 };
+    let robot: Coord = { x: 0, y: 0 };
+    return input.reduce((acc, line) => {
+        let santaMoves: string = line.split('').filter((val, index) => index % 2 === 0).join('');
+        let robotMoves: string = line.split('').filter((val, index) => index % 2 === 1).join('');
+        [santa, acc] = walk(santaMoves, santa, acc);
+        [robot, acc] = walk(robotMoves, robot, acc);
+        return acc;
     }, new Set<string>()).size;
 }
 
@@ -44,4 +57,9 @@ test(day, () => {
     expect(partOne(['^>v<'])).toBe(4);
     expect(partOne(['^v^v^v^v^v'])).toBe(2);
     expect(partOne(getDayInput(day))).toBe(2592);
+
+    expect(partTwo(['^v'])).toBe(3);
+    expect(partTwo(['^>v<'])).toBe(3);
+    expect(partTwo(['^v^v^v^v^v'])).toBe(11);
+    expect(partTwo(getDayInput(day))).toBe(2360);
 });
