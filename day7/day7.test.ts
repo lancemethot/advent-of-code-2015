@@ -39,11 +39,12 @@ function emulateCircuit(commands: Command[]): Map<string, number> {
             continue;
         }
 
+        // Convert wire or literal to a value
         let op1: number | null = getValue(circuitMap, command.op1);
         let op2: number | null = getValue(circuitMap, command.op2);
 
         if(op1 === null || (command.op2 !== null && op2 === null)) {
-            // Input not ready for command
+            // Input not ready for command, check again later
             stack.push(command);
         } else {
             // Process input
@@ -64,6 +65,12 @@ function partOne(input: string[]): number {
     return emulateCircuit(parseInput(input)).get('a')!;
 }
 
+function partTwo(input: string[]): number {
+    let commands: Command[] = parseInput(input);
+    let a: number = emulateCircuit(commands).get('a')!;
+    return emulateCircuit([ { cmd: '', op1: ''+a, op2: null, output: 'b' }, ... commands ]).get('a')!;
+}
+
 test(day, () => {
     debug(`[**${day}**] ${new Date()}\n\n`, day, false);
 
@@ -78,4 +85,6 @@ test(day, () => {
     expect(example.get('y')).toBe(456);
 
     expect(partOne(getDayInput(day))).toBe(46065);
+
+    expect(partTwo(getDayInput(day))).toBe(14134);
 });
