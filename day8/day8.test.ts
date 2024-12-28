@@ -20,9 +20,21 @@ function determineMemoryLength(str: string): number {
     return distilled.length - 2;
 }
 
+function determineEncodedLength(str: string): number {
+    let distilled: string = str.replaceAll("\\", "\\\\").replaceAll("\"", "\\\"");
+    return distilled.length + 2;
+}
+
+
 function partOne(input: string[]): number {
     return input.reduce((acc, line) => {
         return acc + (line.length - determineMemoryLength(line));
+    }, 0);
+}
+
+function partTwo(input: string[]): number {
+    return input.reduce((acc, line) => {
+        return acc + (determineEncodedLength(line) - line.length);
     }, 0);
 }
 
@@ -31,4 +43,7 @@ test(day, () => {
 
     expect(partOne(getExampleInput(day))).toBe(12);
     expect(partOne(getDayInput(day))).toBe(1342);
+
+    expect(partTwo(getExampleInput(day))).toBe(19);
+    expect(partTwo(getDayInput(day))).toBe(2074);
 });
