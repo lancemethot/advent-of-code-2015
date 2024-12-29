@@ -26,6 +26,10 @@ function partOne(input: string): number {
     return generate(input, 40).length;
 }
 
+function partTwo(input: string): number {
+    return generate(input, 50).length;
+}
+
 test(day, () => {
     debug(`[**${day}**] ${new Date()}\n\n`, day, false);
 
@@ -36,4 +40,5 @@ test(day, () => {
     expect(transform("111221")).toBe("312211");
 
     expect(partOne("1113122113")).toBe(360154);
+    expect(partTwo("1113122113")).toBe(5103798);
 });
