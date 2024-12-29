@@ -54,9 +54,18 @@ function partOne(input: string[]): number {
     }, Infinity);
 }
 
+function partTwo(input: string[]): number {
+    return findRoutes(parseInput(input)).reduce((acc, route) => {
+        return Math.max(acc, route.size);
+    }, 0);
+}
+
 test(day, () => {
     debug(`[**${day}**] ${new Date()}\n\n`, day, false);
 
     expect(partOne(getExampleInput(day))).toBe(605);
     expect(partOne(getDayInput(day))).toBe(251);
+
+    expect(partTwo(getExampleInput(day))).toBe(982);
+    expect(partTwo(getDayInput(day))).toBe(898);
 });
