@@ -61,9 +61,24 @@ function partOne(input: string[]): number {
     }, 0);
 }
 
+function partTwo(input: string[]): number {
+    let guests: GuestList = parseInput(input);
+    guests.set("me", new Map<string, number>());
+    guests.keys().forEach(guest => {
+        guests.get("me")!.set(guest, 0);
+        guests.get(guest)!.set("me", 0);
+    });
+    return findSeatingPlans(guests).reduce((acc, seatplan) => {
+        return Math.max(acc, scoreSeatingArrangement(guests, seatplan.arrangement));
+    }, 0);
+}
+
 test(day, () => {
     debug(`[**${day}**] ${new Date()}\n\n`, day, false);
 
     expect(partOne(getExampleInput(day))).toBe(330);
     expect(partOne(getDayInput(day))).toBe(618);
+
+    expect(partTwo(getExampleInput(day))).toBe(286);
+    expect(partTwo(getDayInput(day))).toBe(601);
 });
