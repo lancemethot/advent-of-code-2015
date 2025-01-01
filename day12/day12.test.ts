@@ -14,11 +14,7 @@ function trimRed(item: any): any {
         item = Array.from(item).map(item => trimRed(item));
     } else if(typeof item === 'object') {
         for(const [key, val] of Object.entries(item)) {
-            if(val === "red") {
-                item = {};
-                break;
-            }
-
+            if(val === "red") { item = {}; break; }
             if(typeof val === 'object') item[key] = trimRed(val);
             else if(Array.isArray(val)) item[key] = Array.from(val).map(i => trimRed(i));
         }
