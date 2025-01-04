@@ -34,9 +34,22 @@ function partOne(input: string[], size: number): number {
                 .length;
 }
 
+function partTwo(input: string[], size: number): number {
+    const containers: number[] = input.map(line => Number.parseInt(line));
+    const combinations: number[][] = determineCombinations(containers)
+                .filter(combination => size === calculateCapacity(containers, combination));
+    const fewest: number = combinations.reduce((acc, combination) => {
+        return Math.min(acc, combination.reduce((acc, n) => acc + n, 0));
+    }, Infinity);
+    return combinations.filter(combination => fewest === combination.reduce((acc, n) => acc + n, 0)).length;
+}
+
 test(day, () => {
     debug(`[**${day}**] ${new Date()}\n\n`, day, false);
 
     expect(partOne(getExampleInput(day), 25)).toBe(4);
     expect(partOne(getDayInput(day), 150)).toBe(1638);
+
+    expect(partTwo(getExampleInput(day), 25)).toBe(3);
+    expect(partTwo(getDayInput(day), 150)).toBe(17);
 });
