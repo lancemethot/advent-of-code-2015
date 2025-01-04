@@ -30,11 +30,13 @@ function findNeighbors(grid: boolean[][], position: Coord): Coord[] {
            ].filter(coord => isInBounds(grid, coord));
 }
 
-function step(grid: boolean[][]): boolean[][] {
+function step(grid: boolean[][], stickyCorners: boolean = false): boolean[][] {
     const stepped: boolean[][] = grid.map(row => [ ... row]);
     for(let x = 0; x < grid.length; x++) {
-        for(let y= 0; y < grid[x].length; y++) {
-            const litNeighbors: number = findNeighbors(grid, { x, y }).filter(coord=> grid[coord.x][coord.y]).length;
+        let m = (stickyCorners && (x === 0 || x === grid.length - 1)) ? 1 : 0;
+        let n = (stickyCorners && (x === 0 || x === grid.length - 1)) ? grid[x].length - 1 : grid[x].length;
+        for(let y = m; y < n; y++) {
+            const litNeighbors: number = findNeighbors(grid, { x, y }).filter(coord => grid[coord.x][coord.y]).length;
             if(grid[x][y]) {
                 stepped[x][y] = (litNeighbors === 2 || litNeighbors === 3);
             } else {
@@ -53,9 +55,27 @@ function partOne(input: string[], steps: number): number {
     return grid.reduce((acc, row) => acc + row.reduce((acc, col) => acc + (col ? 1 : 0), 0), 0);
 }
 
+function partTwo(input: string[], steps: number): number {
+    let grid: boolean[][] = parseInput(input);
+    grid[0][0] = true;
+    grid[0][grid[0].length - 1] = true;
+    grid[grid.length - 1][0] = true;
+    grid[grid.length - 1][grid[0].length - 1] = true;
+
+    for(let i = 0; i < steps; i++) {
+        grid = step(grid, true);
+    }
+    
+    return grid.reduce((acc, row) => acc + row.reduce((acc, col) => acc + (col ? 1 : 0), 0), 0);
+}
+
 test(day, () => {
     debug(`[**${day}**] ${new Date()}\n\n`, day, false);
 
     expect(partOne(getExampleInput(day), 4)).toBe(4);
     expect(partOne(getDayInput(day), 100)).toBe(1061);
+
+    expect(partTwo(getExampleInput(day), 5)).toBe(17);
+    expect(partTwo(getDayInput(day), 100)).toBe(1006);
+
 });
