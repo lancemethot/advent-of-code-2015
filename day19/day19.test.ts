@@ -40,6 +40,7 @@ function partOne(input: string[]): number {
 test(day, () => {
     debug(`[**${day}**] ${new Date()}\n\n`, day, false);
 
-    expect(partOne(getExampleInput(day))).toBe(7);
+    expect(partOne(getExampleInput(day, 1))).toBe(4);
+    expect(partOne(getExampleInput(day, 2))).toBe(7);
     expect(partOne(getDayInput(day))).toBe(518);
 });
