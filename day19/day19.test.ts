@@ -19,22 +19,48 @@ function parseInput(input: string[]): { replacements: Replacement[], start: stri
     }, { replacements: [] as Replacement[], start: ''} );
 }
 
+function replace(molecule: string, find: string, substitute: string): string[] {
+    let replaced: string[] = [];
+    let index: number = 0;
+    while((index = molecule.indexOf(find, index)) >= 0) {
+        replaced.push(
+            molecule.substring(0, index) +
+            substitute +
+            molecule.substring(index + find.length)
+        );
+        index++;
+    }
+    return replaced;
+}
+
 function partOne(input: string[]): number {
     const parsed: { replacements: Replacement[], start: string } = parseInput(input);
     const replacements: Replacement[] = parsed.replacements;
     return replacements.reduce((acc, replacement) => {
-        // find all indexes of 'from' in 'start' and replace with 'to'
-        let index: number = 0;
-        while((index = parsed.start.indexOf(replacement.from, index)) >= 0) {
-            acc.add(
-                parsed.start.substring(0, index) +
-                replacement.to +
-                parsed.start.substring(index + replacement.from.length)
-            );
-            index++;
-        }
+        replace(parsed.start, replacement.from, replacement.to).forEach(r => acc.add(r));
         return acc;
     }, new Set<string>()).size;
+}
+
+function partTwo(input: string[]): number {
+    const parsed: { replacements: Replacement[], start: string } = parseInput(input);
+    parsed.replacements.sort((a, b) => b.to.length - a.to.length);
+
+    let shrunk: string = parsed.start;
+    let steps: number = 0;
+
+    while(shrunk !== 'e') {
+        for(let i = 0; i < parsed.replacements.length; i++) {
+            const replaced: string[] = replace(shrunk, parsed.replacements[i].to, parsed.replacements[i].from);
+            for(let n = 0; n < replaced.length; n++) {
+                shrunk = replaced[n];
+                steps++;
+                break;
+            }
+        }
+    }
+
+    return steps;
 }
 
 test(day, () => {
@@ -43,4 +69,8 @@ test(day, () => {
     expect(partOne(getExampleInput(day, 1))).toBe(4);
     expect(partOne(getExampleInput(day, 2))).toBe(7);
     expect(partOne(getDayInput(day))).toBe(518);
+
+    expect(partTwo([...getExampleInput(day, 1), 'e => H', 'e => O'])).toBe(3);
+    //expect(partTwo([...getExampleInput(day, 2), 'e => H', 'e => O'])).toBe(6);
+    expect(partTwo(getDayInput(day))).toBe(200);
 });
