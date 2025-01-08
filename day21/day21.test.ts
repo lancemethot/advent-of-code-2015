@@ -50,18 +50,15 @@ function attack(damage: number, armor: number): number {
     return Math.max((damage - armor), 1);
 }
 
-function fight(player: Combatant, boss: Combatant): boolean {
+function playerWins(player: Combatant, boss: Combatant): boolean {
     const p: Combatant = { ... player };
     const b: Combatant = { ... boss };
-    while(p.hitpoints > 0 && b.hitpoints > 0) {
-        // player takes turn
+    while(p.hitpoints > 0) {
         b.hitpoints -= attack(p.damage, b.armor);
-        // did boss die? return true
         if(b.hitpoints <= 0) return true;
-        // boss takes turn
         p.hitpoints -= attack(b.damage, p.armor);
     }
-    return p.hitpoints > 0;
+    return false;
 }
 
 function gearUp(): Item[][] {
@@ -101,17 +98,26 @@ function suitUp(gear: Item[], playerHitpoints: number): Combatant {
 
 function partOne(input: string[], playerHitpoints: number): number {
     const boss: Combatant = parseInput(input);
-
     const gear: Item[][] = gearUp();
     gear.sort((a, b) => a.reduce((acc, i) => acc += i.cost, 0) - b.reduce((acc, i) => acc += i.cost, 0));
-
     while(gear.length > 0) {
         const suit: Item[] = gear.shift()!;
         const player: Combatant = suitUp(suit, playerHitpoints);
-        if(fight(player, boss)) return suit.reduce((acc, i) => acc += i.cost, 0);
+        if(playerWins(player, boss)) return suit.reduce((acc, i) => acc += i.cost, 0);
     }
+    return 0;
+}
 
-    return 1;
+function partTwo(input: string[], playerHitpoints: number): number {
+    const boss: Combatant = parseInput(input);
+    const gear: Item[][] = gearUp();
+    gear.sort((a, b) => b.reduce((acc, i) => acc += i.cost, 0) - a.reduce((acc, i) => acc += i.cost, 0));
+    while(gear.length > 0) {
+        const suit: Item[] = gear.shift()!;
+        const player: Combatant = suitUp(suit, playerHitpoints);
+        if(!playerWins(player, boss)) return suit.reduce((acc, i) => acc += i.cost, 0);
+    }
+    return 0;
 }
 
 test(day, () => {
@@ -119,4 +125,7 @@ test(day, () => {
 
     expect(partOne(getExampleInput(day), 8)).toBe(65);
     expect(partOne(getDayInput(day), 100)).toBe(121);
+
+    expect(partTwo(getExampleInput(day), 8)).toBe(188);
+    expect(partTwo(getDayInput(day), 100)).toBe(201);
 });
