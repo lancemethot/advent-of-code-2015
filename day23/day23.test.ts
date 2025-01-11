@@ -25,11 +25,7 @@ function parseInput(input: string[]): Instruction[] {
     }, [] as Instruction[]);
 }
 
-function compute(instructions: Instruction[]): Map<string, number> {
-    const registers: Map<string, number> = new Map();
-    registers.set("a", 0);
-    registers.set("b", 0);
-
+function compute(instructions: Instruction[], registers: Map<string, number>): Map<string, number> {
     for(let i = 0; i < instructions.length; i++) {
         let reg: string = instructions[i].register as string;
         switch(instructions[i].command) {
@@ -59,20 +55,37 @@ function compute(instructions: Instruction[]): Map<string, number> {
                 }
                 break;
         }
-
     }
-
     return registers;
 }
 
 function partOne(input: string[]): number {
-    return compute(parseInput(input)).get("b") as number;
+    const registers: Map<string, number> = new Map();
+    registers.set("a", 0);
+    registers.set("b", 0);
+    return compute(parseInput(input), registers).get("b") as number;
+}
+
+function partTwo(input: string[]): number {
+    const registers: Map<string, number> = new Map();
+    registers.set("a", 1);
+    registers.set("b", 0);
+    return compute(parseInput(input), registers).get("b") as number;
 }
 
 test(day, () => {
     debug(`[**${day}**] ${new Date()}\n\n`, day, false);
 
-    expect(compute(parseInput(getExampleInput(day))).get('a')).toBe(2);
+    const registers: Map<string, number> = new Map();
+    registers.set("a", 0);
+    registers.set("b", 0);
+    expect(compute(parseInput(getExampleInput(day)), registers).get('a')).toBe(2);
     expect(partOne(getExampleInput(day))).toBe(0);
     expect(partOne(getDayInput(day))).toBe(184);
+
+    registers.set("a", 1);
+    registers.set("b", 0);
+    expect(compute(parseInput(getExampleInput(day)), registers).get('a')).toBe(7);
+    expect(partTwo(getExampleInput(day))).toBe(0);
+    expect(partTwo(getDayInput(day))).toBe(231);
 });
