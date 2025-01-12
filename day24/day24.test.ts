@@ -35,15 +35,22 @@ function arrangements(weights: number[], targetWeight: number): number[][] {
 }
 
 
-function groupPackages(weights: number[]): number[][] {
+function groupPackages(weights: number[], groups: number): number {
     let sum: number = weights.reduce((acc, w) => acc + w, 0);
-    let targetWeight: number = sum / 3;
-    return [ arrangements(weights, targetWeight).sort((a, b) => a.length - b.length)[0] ];
+    let targetWeight: number = sum / groups;
+    let groupings: number[][] = arrangements(weights, targetWeight);
+    let fewest: number = groupings.reduce((acc, g) => Math.min(g.length, acc), Infinity);
+    return groupings.filter(g => g.length === fewest)
+                    .map(g => g.reduce((acc, w) => acc * w, 1))
+                    .sort((a, b) => a - b)[0];
 }
 
 function partOne(input: string[]): number {
-    const weights: number[] = parseInput(input);
-    return groupPackages(weights)[0].reduce((acc, v) => acc * v, 1);
+    return groupPackages(parseInput(input), 3);
+}
+
+function partTwo(input: string[]): number {
+    return groupPackages(parseInput(input), 4);
 }
 
 test(day, () => {
@@ -51,4 +58,7 @@ test(day, () => {
 
     expect(partOne(getExampleInput(day))).toBe(99);
     expect(partOne(getDayInput(day))).toBe(10723906903);
+
+    expect(partTwo(getExampleInput(day))).toBe(44);
+    expect(partTwo(getDayInput(day))).toBe(74850409);
 });
