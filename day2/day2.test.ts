@@ -1,4 +1,4 @@
-import { getDayInput } from "../utils";
+import { getDayInput } from "advent-of-code-utils";
 
 const day = 'day2';
 

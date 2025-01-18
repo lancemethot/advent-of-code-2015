@@ -1,4 +1,4 @@
-import { debug } from '../utils';
+import { debug } from 'advent-of-code-utils';
 
 const day = 'day20';
 

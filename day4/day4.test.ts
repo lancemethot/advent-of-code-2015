@@ -1,4 +1,4 @@
-import { debug } from '../utils';
+import { debug } from 'advent-of-code-utils';
 import { Md5 } from 'ts-md5';
 
 const day = 'day4';

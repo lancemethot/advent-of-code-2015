@@ -1,4 +1,4 @@
-import { debug, getDayInput, getExampleInput, HeapItem, MinHeap } from '../utils';
+import { debug, getDayInput, getExampleInput, HeapItem, MinHeap } from 'advent-of-code-utils';
 
 const day = 'day22';
 
